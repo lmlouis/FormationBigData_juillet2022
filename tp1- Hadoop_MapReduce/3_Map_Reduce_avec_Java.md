@@ -4,18 +4,14 @@ Vous pouvez également visualiser l'avancement et les résultats de vos Jobs (Ma
 http://localhost:8088
 
 processus map reduce :
-
+---
 1 - map (collecte et preparation des données clé /valeur )
-2 - shuffle ( regrouper les données dans une machine )
-3 - sort ( trier  les données selon clé / valeur )
-4 - reduce  ( traitement des données )
 
-pré-requis : 
-------------
-java : openjdk 1.8
-plateform big data : hadooop cluster 2.7.2
-containerisation :  docker  20.10.12
-IDE : intelij
+2 - shuffle ( regrouper les données dans une machine )
+
+3 - sort ( trier  les données selon clé / valeur )
+
+4 - reduce  ( traitement des données )
 
 création d'un wordcount map reduce 
 ----------------------------------
@@ -26,21 +22,49 @@ Reducers : permet d'effectuer un traitement sur un ensemble de données triées 
 
 projet maeven
 -------------
+* Intelij
 
-jdk 1.8 
+* open jdk 18
 
-group id : hadooop.mapreduce
+* group id : hadooop.mapreduce
 
-artefact : wordcount
+* artefact : wordcount
 
-version : 1 
+* version : 1 
 
+Copier et coller les dépendances hadoop dans ``pom.xml``
+```
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>2.7.2</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client-core -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-mapreduce-client-core</artifactId>
+      <version>2.7.2</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>2.7.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-mapreduce-client-common</artifactId>
+      <version>2.7.2</version>
+    </dependency>
+  </dependencies>
+```
+créer le package `dev.louis.tp1`
 
 Créer la classe TokenizerMapper, contenant ce code:
-
 -----------------------------------------------------
 
-
+```
 package dev.louis.tp1;
 
 import org.apache.hadoop.io.IntWritable;
@@ -63,11 +87,12 @@ public class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable>{
         }
     }
 }
-
+```
 
 
 Créer la classe IntSumReducer:
 --------------------------------------------------
+```
 package dev.louis.tp1;
 
 import org.apache.hadoop.io.IntWritable;
@@ -91,7 +116,7 @@ public class IntSumReducer extends Reducer<Text,IntWritable,Text,IntWritable> {
         context.write(key, result);
     }
 }
-
+```
  créer la classe WordCount:
 ----------------------------
 __________________________________________________
@@ -99,7 +124,7 @@ __________________________________________________
 pour initialiser le map reduce 
 specifier le mapper , reducer et le combiner 
 __________________________________________________
-
+```
 package dev.louis.tp1;
 
 import org.apache.hadoop.conf.Configuration;
@@ -125,7 +150,7 @@ public class WordCount {
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
-
+```
 
 TESTER MAP REDUCE EN LOCAL 
 ----------------------------------
@@ -140,9 +165,12 @@ Créer un fichier de test: file.txt dans lequel vous insèrerez les deux lignes:
 Créer une configuration de type Application (Run->Edit Configurations...->+->Application).
 Définir comme Main Class: tn.insat.tp1.WordCount, et comme Program Arguments: src/main/resources/input/file.txt src/main/resources/output
 Lancer le programme. Un répertoire output sera créé dans le répertoire resources, contenant notamment un fichier part-r-00000, dont le contenu devrait être le suivant:
+<img src="../resources/tp1/config-testwordcount.png">
+<img src="../resources/tp1/test-success.png">
+
 Lancer Map Reduce sur le cluster
 Dans votre projet IntelliJ:
-
+<img src="../resources/tp1/config-wordcount-mavenRun.png">
 Créer une configuration Maven avec la ligne de commande: package install
 Lancer la configuration. Un fichier wordcount-1.jar sera créé dans le répertoire target du projet.
 Copier le fichier jar créé dans le contenaire master. Pour cela:
@@ -158,11 +186,13 @@ exécuter le fichier jar
 hadoop-master:~# hadoop jar wordcount-1.jar dev.louis.tp1.WordCount input output
 
 http://localhost:8041/ // l'acces au noeud 1
-http://localhost:8042/ // l'acces au noeud 2
+* l'acces au noeud 2 : http://localhost:8041/ 
 
-http://localhost:8041/node/containerlogs/container_1657965239839_0001_01_000001/root // log container slave 1
+* log container slave 1
+http://localhost:8041/node/containerlogs/container_1657965239839_0001_01_000001/root 
+<img src="../resources/tp1/log-container.png">
 
-
+```
 adoop-master:~# hadoop fs -ls 
 Found 2 items
 drwxr-xr-x   - root supergroup          0 2022-07-16 10:11 input
@@ -200,3 +230,4 @@ Women's	230050
 Worth	40336
 York	40364
 and	229667
+```

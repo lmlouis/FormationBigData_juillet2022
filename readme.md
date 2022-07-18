@@ -10,6 +10,15 @@ Formation vidéo suivit durant la période de Juillet 2022 animé par une chaine
 * Langage  : Java Version ( open jdk 18 )
 * Environnement : Linux (ubuntu 20.04 )
 
+
+Travil est divisé en TPs
+--- 
+
+* TP1 - Le traitement Batch avec Hadoop
+HDFS et Map Reduce
+
+
+
 Hadoop 
 ------
 
