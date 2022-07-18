@@ -178,13 +178,16 @@ Ouvrir le terminal sur le répertoire du projet. Cela peut être fait avec Intel
 
 copier le fichier jar dans hadooop 
 ----------------------------------
+copier le fichier jar dans map reduce 
+```
 workspace$ sudo docker cp target/wordcount-1.jar hadoop-master:/root/wordcount-1.jar
-
+```
 exécuter le fichier jar 
 -----------------------
-
+exécuter l'application  wordcount dans le dossier input en entré et output en sorti
+```
 hadoop-master:~# hadoop jar wordcount-1.jar dev.louis.tp1.WordCount input output
-
+```
 http://localhost:8041/ // l'acces au noeud 1
 * l'acces au noeud 2 : http://localhost:8041/ 
 
@@ -198,7 +201,9 @@ Found 2 items
 drwxr-xr-x   - root supergroup          0 2022-07-16 10:11 input
 drwxr-xr-x   - root supergroup          0 2022-07-16 23:37 output
 
-
+```
+verifier si le dossier output a été crée
+```
 adoop-master:~# hadoop fs -ls  output
 Found 2 items
 -rw-r--r--   2 root supergroup          0 2022-07-16 23:37 output/_SUCCESS
@@ -208,7 +213,9 @@ hadoop-master:~# hadoop fs -get output/part-r-00000
 
 hadoop-master:~# ls
 hdfs  part-r-00000  purchases.txt  purchases2.txt  run-wordcount.sh  start-hadoop.sh  start-kafka-zookeeper.sh  wordcount-1.jar
-
+```
+voir le contenu du fichier part-r-00000 
+```
 hadoop-master:~# tail -20 part-r-00000 
 Stockton	39996
 Supplies	229222
