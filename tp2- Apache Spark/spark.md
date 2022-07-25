@@ -130,6 +130,8 @@ Spark shell application UI url : http://172.18.0.2:4040 ou http://localhost:8088
 
 # langage scala 
 
+## Opérations
+
 créer un fichier depuis hadoop file text 
 ```
 scala> val lines = sc.textFile("file.txt")
@@ -147,3 +149,46 @@ résultat
 ```
 words: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[2] at flatMap at <console>:26
 ```
+Pair de clé valeur  et reduce le tout selon la clé 
+```
+scala> val wc = words.map(w=>(w, 1)).reduceByKey(_+_)
+```
+résultat
+```
+wc: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[4] at reduceByKey at <console>:28
+```
+
+## Action
+
+Le RDD final va être sauvegarder sous forme de text dans hdfs 
+```
+scala> wc.saveAsTextFile("file.count")
+```
+
+lire le contenu du fichier
+ctl + C  pour sortir de scala 
+
+voir le contenu du dossier file.count
+```
+root@hadoop-master:~# hadoop fs -ls file.count
+Found 3 items
+-rw-r--r--   2 root supergroup          0 2022-07-25 22:15 file.count/_SUCCESS
+-rw-r--r--   2 root supergroup         10 2022-07-25 22:15 file.count/part-00000
+-rw-r--r--   2 root supergroup         41 2022-07-25 22:15 file.count/part-00001
+
+```
+voir le contenu de la réponse file.count/part-00000
+```
+root@hadoop-master:~# hadoop fs -tail file.count/part-00000
+(Hello,2)
+```
+voir le contenu de la réponse file.count/part-00001
+```
+root@hadoop-master:~# hadoop fs -tail file.count/part-00001
+(Spark,1)
+(!,2)
+(Wordcount,1)
+(Hadoop,1)
+```
+
+# Wordcount spark avec java 
